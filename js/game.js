@@ -35,7 +35,7 @@
     Asteroid.prototype.speed = 100;
 
     function Asteroid(x, y) {
-      this.sprite = new Game.SpriteAnimation(Game.getTexturesFromFrameBase('asteroid'));
+      this.sprite = new Game.SpriteAnimation(Game.getTexturesFromFrameBase('asteroid'), 0.5);
       this.sprite.anchor.x = 0.5;
       this.sprite.anchor.y = 0.5;
       this.sprite.position.x = x;
@@ -43,6 +43,7 @@
     }
 
     Asteroid.prototype.update = function(dt) {
+      this.sprite.update(dt);
       return this.sprite.rotation += 0.5 * dt;
     };
 
@@ -108,12 +109,32 @@
   Game.SpriteAnimation = (function(_super) {
     __extends(SpriteAnimation, _super);
 
-    function SpriteAnimation(textures) {
+    SpriteAnimation.prototype.textures = null;
+
+    SpriteAnimation.prototype.timePerFrame = 1;
+
+    SpriteAnimation.prototype.timeUntilNextFrame = 1;
+
+    SpriteAnimation.prototype.frameCur = 0;
+
+    function SpriteAnimation(textures, timePerFrame) {
       if (!_.isArray(textures)) {
         throw Error("bad arg");
       }
+      this.textures = textures;
+      this.timePerFrame = timePerFrame;
+      this.timeUntilNextFrame = timePerFrame;
       SpriteAnimation.__super__.constructor.call(this, textures[0]);
     }
+
+    SpriteAnimation.prototype.update = function(dt) {
+      this.timeUntilNextFrame -= dt;
+      if (this.timeUntilNextFrame <= 0) {
+        this.timeUntilNextFrame += this.timePerFrame;
+        this.frameCur = (this.frameCur + 1) % this.textures.length;
+        return this.setTexture(this.textures[this.frameCur]);
+      }
+    };
 
     return SpriteAnimation;
 
