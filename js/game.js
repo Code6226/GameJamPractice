@@ -183,16 +183,23 @@
 
   stage = new PIXI.Stage(0x110022);
 
-  renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight, null);
-
-  document.body.appendChild(renderer.view);
+  renderer = PIXI.autoDetectRenderer(500, 500, null);
 
   renderer.view.style.position = "absolute";
 
+  renderer.view.style.display = "block";
+
   renderer.view.style.top = renderer.view.style.left = "0";
 
+  renderer.view.style.width = window.innerWidth + "px";
+
+  renderer.view.style.height = window.innerHeight + "px";
+
+  document.body.appendChild(renderer.view);
+
   $(window).resize(function() {
-    return renderer.resize(window.innerWidth, window.innerHeight);
+    renderer.view.style.width = window.innerWidth + "px";
+    return renderer.view.style.height = window.innerHeight + "px";
   });
 
   input = new Game.InputManager;
@@ -224,7 +231,7 @@
     bunnies.push(bunny);
     return asteroids = _.map(_.range(8), function() {
       var asteroid;
-      asteroid = new Game.Asteroid(100 + _.random(500), 100 + _.random(500));
+      asteroid = new Game.Asteroid(50 + _.random(400), 50 + _.random(400));
       stage.addChild(asteroid.sprite);
       return asteroid;
     });
